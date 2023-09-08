@@ -4,6 +4,7 @@ from langchain.utilities import SQLDatabase
 from langchain_experimental.sql import SQLDatabaseChain
 import pyodbc
 from sqlalchemy.engine import URL
+from langchain.prompts.prompt import PromptTemplate
 
 env = environ.Env()
 environ.Env.read_env()
@@ -44,14 +45,20 @@ llm = OpenAI(temperature=0, openai_api_key=API_KEY)
 
 # Crea la query
 QUERY = """
-Given an input question, first create a syntactically correct sql server query to run, then look at the results of the query and return the answer.
+Act like an assistant then given an input question, first create a syntactically correct sql server query to run, 
+then look at the results of the query and return the answer. If you don't have the answer, just apologize.
 Use the following format:
 
 Question: Question here
 SQLQuery: SQL Query to run
 SQLResult: Result of the SQLQuery
 Answer: Final answer here
-{question}
+
+Only use the following tables and the instructions:
+table: dbo_v2.fcs_computadores, dbo_v2.fcs_computador_medidor	
+instructions: when is asked for firmware you have to use the column IdFirmware_fk, when is asked for Modbus you have to use Id_Modbus
+
+Question: {question}
 """
 
 # Setea la conexion de la db con el modelo
@@ -67,7 +74,7 @@ def run():
         else:
             try:
                 question = QUERY.format(question=prompt)
-                print(db_chain.run(prompt))
+                print(db_chain.run(question))
             except Exception as e:
                 print(e)
 
