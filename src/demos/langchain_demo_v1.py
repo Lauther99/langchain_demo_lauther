@@ -5,6 +5,9 @@ from langchain_experimental.sql import SQLDatabaseChain
 import pyodbc
 from sqlalchemy.engine import URL
 from langchain.prompts.prompt import PromptTemplate
+from sqlalchemy import select, create_engine, MetaData, Table,inspect
+from langchain.callbacks import get_openai_callback
+
 
 env = environ.Env()
 environ.Env.read_env()
@@ -54,8 +57,9 @@ SQLQuery: SQL Query to run
 SQLResult: Result of the SQLQuery
 Answer: Final answer here
 
-Only use the following tables and the instructions:
-table: dbo_v2.fcs_computadores, dbo_v2.fcs_computador_medidor	
+Only use the following schema, tables and the instructions:
+schema: dbo_v2
+table: dbo_v2.fcs_computadores, dbo_v2.fcs_computador_medidor, dbo_v2.med_sistema_medicion
 instructions: when is asked for firmware you have to use the column IdFirmware_fk, when is asked for Modbus you have to use Id_Modbus
 
 Question: {question}
@@ -74,7 +78,12 @@ def run():
         else:
             try:
                 question = QUERY.format(question=prompt)
-                print(db_chain.run(question))
+                with get_openai_callback() as cb:
+                    response = db_chain.run(question)
+                    print(f"Total Tokens: {cb.total_tokens}")
+                    print(f"Prompt Tokens: {cb.prompt_tokens}")
+                    print(f"Completion Tokens: {cb.completion_tokens}")
+                    print(f"Total Cost (USD): ${cb.total_cost}")
             except Exception as e:
                 print(e)
 
