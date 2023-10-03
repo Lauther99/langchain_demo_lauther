@@ -61,30 +61,21 @@ custom_tool_list = [retriever_tool]
 
 toolkit = SQLDatabaseToolkit(db=sql_database, llm=model)
 
-custom_suffix = """
-I should first use the similar_examples tool to get the similar examples.
-If the examples are enough to construct the query, I can build it.
-Otherwise, I can then look at the tables in the database to see what I can query.
-I should always use dbo_v2 schema for tables when querying.
-"""
-
 agent = create_sql_agent(llm=model,
                          toolkit=toolkit,
                          verbose=True,
                          agent_type=AgentType.OPENAI_FUNCTIONS,
                          extra_tools=custom_tool_list,
-                         suffix=custom_suffix,
-                         input_variables=None
                         )
 
-# query_str_v3 = "List the names of the measurement system of the meters that have a computer with Tag equal to EST-3138.05-QUEIMA?"
-# query_str_v5 = "List the names of the measurements systems of the computer with Tag equal to EST-3138.05-QUEIMA?"
-# query_str_v4 = "List the quantity of meters that have each computer"
-# with get_openai_callback() as cb:
-#     res = agent.run(query_str_v4)
-#     print(res)
-#     print(f"Total Tokens: {cb.total_tokens}")
-#     print(f"Prompt Tokens: {cb.prompt_tokens}")
-#     print(f"Completion Tokens: {cb.completion_tokens}")
-#     print(f"Total Cost (USD): ${cb.total_cost}")
+query_str_v3 = "List the names of the measurement system of the meters that have a computer with Tag equal to EST-3138.05-QUEIMA?"
+query_str_v5 = "List the names of the measurements systems of the computer with Tag equal to EST-3138.05-QUEIMA?"
+query_str_v4 = "List the quantity of meters that have each computer"
+with get_openai_callback() as cb:
+    res = agent.run(query_str_v4)
+    print(res)
+    print(f"Total Tokens: {cb.total_tokens}")
+    print(f"Prompt Tokens: {cb.prompt_tokens}")
+    print(f"Completion Tokens: {cb.completion_tokens}")
+    print(f"Total Cost (USD): ${cb.total_cost}")
 
