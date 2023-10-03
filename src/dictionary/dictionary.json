@@ -2,6 +2,6 @@
     "List all computers.": "SELECT * FROM dbo_v2.fcs_computadores",
     "Quantity of computers.": "SELECT COUNT(*) FROM dbo_v2.fcs_computadores",
     "How many meters does the computer with IP equal to 1.1.1.1 has?.": "SELECT COUNT(*) FROM dbo_v2.fcs_computador_medidor cm INNER JOIN dbo_v2.fcs_computadores c on c.Id = cm.IdComputador_fk WHERE c.IP = '1.1.1.1'",
-    "List the names of the measurement system of the meters that have a computer with tag equal to FQI-3161.01-017?.": "SELECT sm.Nombre FROM dbo_v2.med_sistema_medicion sm INNER JOIN dbo_v2.fcs_computador_medidor cm on cm.Id_Sisema_Medicion = sm.Id INNER JOIN dbo_v2.fcs_computadores c on c.Id = cm.IdComputador_fk WHERE c.Tag = 'FQI-3161.01-017'",
-    "List the names of the measurement system of the meters that have a computer with IP equal to 10.233.81.59?.": "SELECT sm.Nombre FROM dbo_v2.med_sistema_medicion sm INNER JOIN dbo_v2.fcs_computador_medidor cm on cm.Id_Sisema_Medicion = sm.Id INNER JOIN dbo_v2.fcs_computadores c on c.Id = cm.IdComputador_fk WHERE c.IP = '10.233.81.59'"
+    "List the names of the measurement system that have a computer with tag equal to FQI-3161.01-017?.": "SELECT sm.Nombre FROM dbo_v2.med_sistema_medicion sm INNER JOIN dbo_v2.fcs_computador_medidor cm on cm.Id_Sisema_Medicion = sm.Id INNER JOIN dbo_v2.fcs_computadores c on c.Id = cm.IdComputador_fk WHERE c.Tag = 'FQI-3161.01-017'",
+    "List the names of the measurement system that have a computer with IP equal to 10.233.81.59?.": "SELECT sm.Nombre FROM dbo_v2.med_sistema_medicion sm INNER JOIN dbo_v2.fcs_computador_medidor cm on cm.Id_Sisema_Medicion = sm.Id INNER JOIN dbo_v2.fcs_computadores c on c.Id = cm.IdComputador_fk WHERE c.IP = '10.233.81.59'"
 }
