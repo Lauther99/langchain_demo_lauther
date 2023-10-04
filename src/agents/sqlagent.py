@@ -35,11 +35,11 @@ def create_sql_agent_plus_extra_tools(
     early_stopping_method: str = "force",
     verbose: bool = False,
     agent_executor_kwargs: Optional[Dict[str, Any]] = None,
-    extra_tools = List[BaseTool],
+    custom_tools = List[BaseTool],
     **kwargs: Dict[str, Any],
 ) -> AgentExecutor:
     """Construct an SQL agent from an LLM and tools."""
-    tools = extra_tools
+    tools = custom_tools
     prefix = prefix.format(dialect=toolkit.dialect, top_k=top_k)
     agent: BaseSingleActionAgent
     prompt = ZeroShotAgent.create_prompt(
