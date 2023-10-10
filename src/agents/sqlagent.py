@@ -1,5 +1,6 @@
 """SQL agent."""
 import sys
+from typing import Callable
 
 sys.path.append('C:\\Users\\lauth\\OneDrive\\Desktop\\py_projects\\langchain_demo_lauther')
 from src.prompts.prompt import CUSTOM_PREFIX, CUSTOM_FORMAT_INSTRUCTIONS, CUSTOM_SUFFIX

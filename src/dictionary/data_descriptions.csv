@@ -1,0 +1,4 @@
+Table;Description
+fcs_computadores;General information about computers
+asd;Table connector between computers in "fcs_computadores" and meters in "med_sistema_medicion"
+med_sistema_medicion;General information about systems medition

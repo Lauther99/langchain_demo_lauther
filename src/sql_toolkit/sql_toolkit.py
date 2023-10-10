@@ -14,9 +14,15 @@ from langchain.tools.sql_database.tool import (
 from langchain.utilities.sql_database import SQLDatabase
 
 from langchain.embeddings import HuggingFaceEmbeddings
+from langchain.embeddings.openai import OpenAIEmbeddings
 from langchain.vectorstores import FAISS
 from langchain.docstore.document import Document
 from typing import (List)
+
+
+import spacy
+import faiss
+import numpy as np
 
 
 
@@ -88,11 +94,12 @@ class CustomSQLToolkit(BaseToolkit):
             query_sql_checker_tool,
         ]
 
-class FAISSSQLQuerySimilarity: #Todo: Comparar con los resultados de 'Vectara, Pinecone, Chroma' para ver cual es más conveniente
-    def __init__(self, model_name: str, splitted_documents: List[Document]):
-        self.model_name = model_name
-        self.hf_model = HuggingFaceEmbeddings(model_name=self.model_name)
-        self.db = FAISS.from_documents(splitted_documents, self.hf_model)
+class SQLDatabaseInfo: #Todo: Comparar con los resultados de 'Vectara, Pinecone, Chroma' para ver cual es más conveniente
+    def __init__(self, hf_model_name: str, splitted_documents: List[Document]):
+        self.document_list = splitted_documents
+        self.hf_model_name = hf_model_name
+        self.hf_model = HuggingFaceEmbeddings(model_name=self.hf_model_name)
+        self.db = FAISS.from_documents(self.document_list, self.hf_model)
 
     def get_similar_sql_examples(self, query: str):
         '''Use this tool to get similar SQL queries from a database'''
@@ -113,4 +120,36 @@ class FAISSSQLQuerySimilarity: #Todo: Comparar con los resultados de 'Vectara, P
         embedding_vector = self.hf_model.embed_query(query)
         similar_results = self.db.similarity_search_with_score_by_vector(embedding_vector, k=1, score_threshold=0.25)
         return similar_results # To see the score and results
+
+def get_tables_descriptions(
+        data : any,
+        table_names : List[str],
+):
+    '''Use this tool to get descriptions of tables from database'''
+    datos = [(table, des) for table, des in zip(data['Table'], data['Description'])]
+    
+    # Cargar el modelo de lenguaje de spaCy
+    nlp = spacy.load('es_core_news_md')
+
+    # Obtener los vectores de palabras para cada descripción
+    descripciones = [nlp(descripcion).vector for _, descripcion in datos]
+
+    # Configurar el índice
+    index = faiss.IndexFlatL2(len(descripciones[0]))
+    descripciones = np.array(descripciones).astype('float32')
+    index.add(descripciones)
+    descripciones_resultado = {}
+
+    for name in table_names:
+        table_query = [des for table, des in datos if table == name][0]
+        vector_query = nlp(table_query).vector
+        D, I = index.search(np.array([vector_query]).astype('float32'), k=1)
+        indice_resultado = I[0][0]
+        descripcion_resultado = datos[indice_resultado][1]
+        
+        descripciones_resultado.append(descripcion_resultado)
+
+    print(descripciones_resultado)
+
+
         

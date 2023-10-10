@@ -6,7 +6,7 @@ import environ
 from langchain.tools import Tool
 # from langchain.agents.agent_toolkits import SQLDatabaseToolkit
 sys.path.append('C:\\Users\\lauth\\OneDrive\\Desktop\\py_projects\\langchain_demo_lauther')
-from src.sql_toolkit.sql_toolkit import CustomSQLToolkit, FAISSSQLQuerySimilarity
+from src.sql_toolkit.sql_toolkit import CustomSQLToolkit, SQLDatabaseInfo
 from langchain.chat_models import ChatOpenAI
 from sqlalchemy.engine import URL
 from langchain.utilities import SQLDatabase
@@ -43,7 +43,7 @@ loader = CSVLoader(file_path=ruta_completa,csv_args = {"delimiter": ';'}, source
 data = loader.load()
 text_splitter = CharacterTextSplitter(chunk_size=800, chunk_overlap=0)
 docs = text_splitter.split_documents(data)
-get_similarity_tool = FAISSSQLQuerySimilarity(model_name="hkunlp/instructor-large", splitted_documents=docs)
+get_similarity_tool = SQLDatabaseInfo(model_name="hkunlp/instructor-large", splitted_documents=docs)
 
 # Creating tools
 tools = [
@@ -72,13 +72,13 @@ agent_executor = create_sql_agent_plus_extra_tools(
 query_str = "how many computers are in the table?"
 query_str = "Meters of each computer"
 query_str_v2 = "quantity of meters that the computer with IP equal to 10.233.117.63 has"
-query_str_v3 = "List the names of the measurement system of the meters that the computer has with tag FQI-3161.01-017?"
+query_str_v3 = "List the names of the measurement system of the computer has with IP equal 1.1.1.1?"
 query_str_v4 = "List the names of the measurement system of the meters that the computer has with IP equal to 10.233.81.59?"
 query_str_v5 = "the computers that are in port 4000"
 
 from langchain.callbacks import get_openai_callback
 with get_openai_callback() as cb:
-    agent_executor.run(query_str_v2)
+    agent_executor.run(query_str_v3)
     print(f"Total Tokens: {cb.total_tokens}")
     print(f"Prompt Tokens: {cb.prompt_tokens}")
     print(f"Completion Tokens: {cb.completion_tokens}")
