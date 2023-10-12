@@ -1,3 +1,4 @@
 venv
 /src/demos/.env
 list
+/src/chain_demos/.env

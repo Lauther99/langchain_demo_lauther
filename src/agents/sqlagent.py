@@ -2,6 +2,8 @@
 import sys
 from typing import Callable
 
+from langchain import PromptTemplate
+
 sys.path.append('C:\\Users\\lauth\\OneDrive\\Desktop\\py_projects\\langchain_demo_lauther')
 from src.prompts.prompt import CUSTOM_PREFIX, CUSTOM_FORMAT_INSTRUCTIONS, CUSTOM_SUFFIX
 
@@ -37,11 +39,12 @@ def create_sql_agent_plus_extra_tools(
     verbose: bool = False,
     agent_executor_kwargs: Optional[Dict[str, Any]] = None,
     custom_tools = List[BaseTool],
+    summary: Optional[str] = "",
     **kwargs: Dict[str, Any],
 ) -> AgentExecutor:
     """Construct an SQL agent from an LLM and tools."""
     tools = custom_tools
-    prefix = prefix.format(dialect=toolkit.dialect, top_k=top_k)
+    prefix = prefix.format(dialect=toolkit.dialect, top_k=top_k, summary=summary)
     agent: BaseSingleActionAgent
     prompt = ZeroShotAgent.create_prompt(
             tools,

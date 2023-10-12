@@ -18,12 +18,13 @@ from langchain.embeddings.openai import OpenAIEmbeddings
 from langchain.vectorstores import FAISS
 from langchain.docstore.document import Document
 from typing import (List)
-
+from pandas import DataFrame
+import pandas as pd
 
 import spacy
 import faiss
 import numpy as np
-
+from fuzzywuzzy import fuzz
 
 
 class CustomSQLToolkit(BaseToolkit):
@@ -94,7 +95,7 @@ class CustomSQLToolkit(BaseToolkit):
             query_sql_checker_tool,
         ]
 
-class SQLDatabaseInfo: #Todo: Comparar con los resultados de 'Vectara, Pinecone, Chroma' para ver cual es más conveniente
+class SQLDatabaseExamples: #Todo: Comparar con los resultados de 'Vectara, Pinecone, Chroma' para ver cual es más conveniente
     def __init__(self, hf_model_name: str, splitted_documents: List[Document]):
         self.document_list = splitted_documents
         self.hf_model_name = hf_model_name
@@ -121,35 +122,104 @@ class SQLDatabaseInfo: #Todo: Comparar con los resultados de 'Vectara, Pinecone,
         similar_results = self.db.similarity_search_with_score_by_vector(embedding_vector, k=1, score_threshold=0.25)
         return similar_results # To see the score and results
 
-def get_tables_descriptions(
-        data : any,
-        table_names : List[str],
-):
-    '''Use this tool to get descriptions of tables from database'''
-    datos = [(table, des) for table, des in zip(data['Table'], data['Description'])]
+class SQLDatabaseInfo():
+    def __init__(self, ruta_completa: str, table_names: List[str], ):
+        self.table_names = table_names
+        self.descriptions_root_path = ruta_completa
+
+    def get_tables_descriptions(self, table_name: str):
+        '''Use this tool to get descriptions of tables from database'''
+        table_name = ""
+        path = self.descriptions_root_path + '\data_descriptions.csv'
+        data = pd.read_csv(path, delimiter=';')
+
+        datos = [(table, des) for table, des in zip(data['Table'], data['Description'])]
+        
+        # Cargar el modelo de lenguaje de spaCy
+        nlp = spacy.load('es_core_news_md')
+
+        # Obtener los vectores de palabras para cada descripción
+        descripciones = [nlp(descripcion).vector for _, descripcion in datos]
+
+        # Configurar el índice
+        index = faiss.IndexFlatL2(len(descripciones[0]))
+        descripciones = np.array(descripciones).astype('float32')
+        res = []
+        for name in self.table_names:
+            table_query = [des for table, des in datos if table == name][0]
+            vector_query = nlp(table_query).vector
+            D, I = index.search(np.array([vector_query]).astype('float32'), k=1)
+            indice_resultado = I[0][0]
+            descripcion_resultado = datos[indice_resultado][1]
+            
+            descripcion = f"The table {name} is a {descripcion_resultado}"
+            res.append(descripcion)
+        
+        return '. \n '.join(res)
     
-    # Cargar el modelo de lenguaje de spaCy
-    nlp = spacy.load('es_core_news_md')
-
-    # Obtener los vectores de palabras para cada descripción
-    descripciones = [nlp(descripcion).vector for _, descripcion in datos]
-
-    # Configurar el índice
-    index = faiss.IndexFlatL2(len(descripciones[0]))
-    descripciones = np.array(descripciones).astype('float32')
-    index.add(descripciones)
-    descripciones_resultado = {}
-
-    for name in table_names:
-        table_query = [des for table, des in datos if table == name][0]
-        vector_query = nlp(table_query).vector
-        D, I = index.search(np.array([vector_query]).astype('float32'), k=1)
-        indice_resultado = I[0][0]
-        descripcion_resultado = datos[indice_resultado][1]
+    def get_tables_descriptions_fuzzywuzzy(self):
+        path = self.descriptions_root_path + '\data_descriptions.csv'
+        data = pd.read_csv(path, delimiter=';')
+        datos = [(table, des) for table, des in zip(data['Table'], data['Description'])]
         
-        descripciones_resultado.append(descripcion_resultado)
+        # Cargar el modelo de lenguaje de spaCy
+        nlp = spacy.load('es_core_news_md')
 
-    print(descripciones_resultado)
+        # Obtener los vectores de palabras para cada descripción
+        descripciones = [nlp(descripcion).vector for _, descripcion in datos]
 
+        descripciones = np.array(descripciones).astype('float32')
+        res = []
+        for name in self.table_names:
+            best_match = max(datos, key=lambda x: fuzz.ratio(name, x[0]))
+            table_name = best_match[0]
+            table_des = best_match[1]
 
+            descripcion = f"The table {table_name} is a {table_des}"
+            res.append(descripcion)
+
+        return '. \n '.join(res)
+    
+    def get_variable_names(self, variable_list_strings : str):
+        '''Use this tool to get the real names of the variables in the table'''
+        path = self.descriptions_root_path + '\data_variables.csv'
+        data = pd.read_csv(path, delimiter=';', encoding='utf-8')
+        datos = [(input, name) for input, name in zip(data['Input'], data['Name'])]
+        variables_array = variable_list_strings.split(",")
+        # Cargar el modelo de lenguaje de spaCy
+        nlp = spacy.load('es_core_news_md')
+
+        # Obtener los vectores de palabras para cada descripción
+        descripciones = [nlp(descripcion).vector for _, descripcion in datos]
+
+        descripciones = np.array(descripciones).astype('float32')
+        res = []
+        for name in variables_array:
+            best_match = max(datos, key=lambda x: fuzz.ratio(name, x[0]))
+            bm = best_match[1]
+            res.append(bm)
+
+        return ','.join(res)
+    
+    def get_variable_names_v2(self, variable_string : str):
+        '''Use this tool to get the real names of the variables in the table'''
+        path = self.descriptions_root_path + '\data_variables.csv'
+        data = pd.read_csv(path, delimiter=';', encoding='utf-8')
+        datos = [(input, name) for input, name in zip(data['Input'], data['Name'])]
+        # Cargar el modelo de lenguaje de spaCy
+        nlp = spacy.load('es_core_news_md')
+
+        # Obtener los vectores de palabras para cada descripción
+        descripciones = [nlp(descripcion).vector for _, descripcion in datos]
+
+        descripciones = np.array(descripciones).astype('float32')
         
+        best_match = max(datos, key=lambda x: fuzz.ratio(variable_string, x[0]))
+        bm = best_match[1]
+        return bm
+            
+
+
+
+
+
