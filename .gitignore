@@ -1,0 +1,9 @@
+venv
+/demos/agents/__pycache__
+/demos/config/__pycache__
+/demos/config/.env
+/demos/data/__pycache__
+/demos/prompts/__pycache__
+/demos/tools/__pycache__
+/demos/utils/__pycache__
+/demos/mongo/__pycache__

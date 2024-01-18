@@ -1,0 +1,6 @@
+Table;Description
+fcs_computadores;Table with general information about computers
+fcs_computador_medidor;Table connector between computers in table dbo_v2.fcs_computadores and measurement systems in table dbo_v2.med_sistema_medicion, has information about meters in the computers like meter codes, status of the meter, the id of the measurement system that the computer is connected
+med_sistema_medicion;Table with general information about measurement systems
+var_tipo_variable;Table with information about the name of medition variables for example: pressure, temperature, density, volume, average flow, etc, and their respective ids
+var_variable_datos;Table connector between variables in table dbo_v2.var_tipo_variable and measurement systems in table dbo_v2.med_sistema_medicion. Has information about the values of the variables in table dbo_v2.var_variable_datos with their respective measurement system ids

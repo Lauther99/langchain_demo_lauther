@@ -1,0 +1,95 @@
+Input;CorrectName
+Density;Densidade (kg/m3)
+Differential pressure;Press�o Diferencial (kPa) / Frequencia (Hz)
+Temperature;Temperatura (�C)
+bsw concentration;BSW (%)
+Gross flow;Vaz�o Bruta
+Static pressure;Press�o Est�tica (kPa)
+corrected flow;Vaz�o Corrigida
+current;Corriente (mA)
+resistance;Resistencia
+viscosity;Viscosidade
+massico;M�ssico
+flow net;Flow Net (m3/h)
+flow rate per day;Flow Rate per day (km3/day)
+flow NSV;Flow NSV (m3/h)
+net volume;Vol Net (m3)
+volume IV;Vol IV (m3)
+volume NSV;Vol NSV (m3)
+meter factor;Meter Factor
+k-factor;K-Factor (pulsos/m3)
+CPL;CPL
+YOU-F;VCF
+specific mass (P,T);Massa especifica (P,T)
+specific mass (Ref);Massa especifica (Ref)
+Average flow;Vaz�o m�dia
+low flow alarm;Alarme baixa vaz�o
+high flow alarm;Alarme alta vaz�o
+current density;Densidade atual
+previous density;Densidade anterior
+lower limit T;Limite Inferior T
+upper limit T;Limite Superior T
+lower bound P;Limite Inferior P
+upper limit P;Limite Superior P
+corrected volume of the day;Volume corrigido do dia
+end period volume;Volume fim periodo
+volume start period;Volume inicio periodo
+lower limit DP;Limite inferior DP
+upper limit DP;Limite superior DP
+mole;Mol (%)
+CO2 mole;Mol (%) CO2
+methane mole;Mol (%) metano
+ethane mole;Mol (%) etano
+propane mole;Mol (%) propano
+n-butane mole;Mol (%) n-butano
+i-butane mole;Mol (%) i-butano
+n-pentane mole;Mol (%) n-pentano
+i-pentane mole;Mol (%) i-pentano
+hexane mole;Mol (%) hexano
+heptane mole;Mol (%) heptano
+octane mole;Mol (%) octano
+nonane mole;Mol (%) nonano
+decane mole;Mol (%) decano
+H2S mole;Mol (%) H2S
+water mole;Mol (%) �gua
+helium mole;Mol (%) helio
+oxygen mole;Mol (%) oxigenio
+CO mole;Mol (%) CO
+hydrogen mole;Mol (%) hidrogenio
+argon mole;Mol (%) argonio
+qmax mole;Qmax
+dp cut off;DP Cut off
+length;Comprimento
+relative humidity;Umidade Relativa
+absolute pressure;Press�o Absoluta
+BSW no percentage;BSW
+RS;RS
+FE;FE
+Effective Flow Time;Tempo de Fluxo Efetivo (min)
+Relative density;Densidade relativa
+Orifice Diameter;Orifice Diameter (mm)
+Pipe Diameter;Pipe Diameter (mm)
+Runtime;Runtime (min)
+High P Alarm;Alarme alta P
+Low P alarm;Alarme baixa P
+High T Alarm;Alarme alta T
+Low T alarm;Alarme baixa T
+High DP alarm;Alarme alta DP
+Low DP alarm;Alarme baixa DP
+FE_summit;FE_summit
+RS_Summit;RS_Summit
+Compressibility Factor-Z;Compressibility Factor-Z
+Reference density;Densidade referencia
+MDR liquidity volume;Vol Liq MDR (Sm3)
+Multivariable;Multivari�vel
+Level;Nivel
+Average flow in km3/h;Vaz�o m�dia (km3/h)
+Net Volume Produced ;Vol Produzido Net (m3)
+NSV Volume Produced;Vol Produzido NSV (m3)
+Net Transferred Volume;Vol Transferido Net (m3)
+NSV Transferred Volume;Vol Transferido NSV (m3)
+NSV totalizer;Totalizador NSV (m3)
+Line density;Densidade linha (kg/m3)
+Base density;Densidade base (kg/m3)
+Z base;Z base
+Z line;Z linha
