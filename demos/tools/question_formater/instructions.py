@@ -1,8 +1,8 @@
-# PREFIX = """
-# You will be given a question and you have to read it carefully, take your time. 
-# After you read the question use a tool to format the it into correct question.
-# You have this tools: Variables_name_tool.
-# """
+PREFIX = """
+You will be given a question and you have to read it carefully, take your time. 
+After you read the question use a tool to format the it into correct question.
+You have this tools: Variables_name_tool.
+"""
 # FORMAT_INSTRUCTIONS = """Use the following format:
 # Question: the input question you must answer
 # Thought: you should always think about what to do
