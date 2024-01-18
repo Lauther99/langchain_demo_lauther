@@ -1,9 +1,11 @@
 venv
+/demos/config/.env
 /demos/agents/__pycache__
 /demos/config/__pycache__
-/demos/config/.env
 /demos/data/__pycache__
-/demos/prompts/__pycache__
-/demos/tools/__pycache__
-/demos/utils/__pycache__
 /demos/mongo/__pycache__
+/demos/tools/__pycache__
+/demos/tools/question_formater/__pycache__
+/demos/tools/sql_result/__pycache__
+/demos/tools/sql_translator/__pycache__
+/demos/utils/__pycache__

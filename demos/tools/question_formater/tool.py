@@ -2,13 +2,8 @@ import sys
 
 sys.path.append("C:\\Users\\lauth\\OneDrive\\Desktop\\open_ai_assistant")
 
-# from demos.prompts.instructions import (
-#     sql_translator_instruction,
-#     system_instruction,
-#     content_error_instruction,
-# )
 from demos.config.env_config import OPENAI_API_KEY
-from demos.tools.variables import VariablesTool
+from demos.tools.question_formater.variables import VariablesTool
 from langchain.tools import BaseTool
 from langchain.pydantic_v1 import BaseModel, Field
 from langchain.prompts import PromptTemplate

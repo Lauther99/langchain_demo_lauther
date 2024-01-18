@@ -1,7 +1,8 @@
 from demos.config.database_connection import mongo_client
+from demos.config.env_config import MONGODB_DATABASE_NAME
 
 
-db = mongo_client["test-openai"]
+db = mongo_client[MONGODB_DATABASE_NAME]
 collection = db["users"]
 
 

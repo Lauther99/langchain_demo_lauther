@@ -21,8 +21,8 @@ class SQLQueryTool(BaseTool):
     description: str = """
     Input to this tool is a detailed and correct SQL query, output is a result from the database.
     If the query is not correct, an error message will be returned.
-    If an error is returned, rewrite the query, check the query, and try again.
     """
+    # If an error is returned, rewrite the query, check the query, and try again.
 
     def _run(self, sql_query):
         return get_sql_query(sql_query)

@@ -1,7 +1,7 @@
 import sys
 
 sys.path.append("C:\\Users\\lauth\\OneDrive\\Desktop\\open_ai_assistant")
-from demos.config.env_config import ODBCDRIVER, HOST, DBNAME, USER, PWD
+from demos.config.env_config import ODBCDRIVER, HOST, DBNAME, USER, PWD, MONGODB_URL
 import pyodbc
 import pymongo
 
@@ -11,4 +11,4 @@ conn = pyodbc.connect(
 )
 
 # Para mongo
-mongo_client = pymongo.MongoClient("mongodb://localhost:27017/")
+mongo_client = pymongo.MongoClient(MONGODB_URL)
