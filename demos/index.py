@@ -46,8 +46,6 @@ q7 = "quantity of computers that are in port 4000"
 q9 = "'average flow' registered in August 2023 for all measurements systems for the computer with tag FQI-EMED_05-08-10"
 q10 = "average 'temperature' value for all measurements systems for the computer with tag FQI-EMED_05-08-10"
 
-# retry_decorator = _create_retry_decorator(llm)
-
 def start(query: str):
     with get_openai_callback() as cb:
         agent.invoke({"input": query})
@@ -55,4 +53,4 @@ def start(query: str):
         print(f"Prompt Tokens: {cb.prompt_tokens}")
         print(f"Completion Tokens: {cb.completion_tokens}")
         print(f"Total Cost (USD): ${cb.total_cost}")
-start(q10)
+start(q9)

@@ -97,7 +97,7 @@ def get_variable_name(initial_input: str):
 
 class InputFormatterTool(BaseTool):
     name = "Input_formatter"
-    description = "Use this tool to pre process and format the user question. Input to this tool is the user question, output is a question formatted"
+    description = "Use this tool to pre process and format the user question. Input to this tool is the user unformatted question, output is a question formatted"
 
     def _run(self, initial_input: str):
         return get_variable_name(initial_input)
