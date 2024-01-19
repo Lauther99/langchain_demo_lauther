@@ -47,6 +47,14 @@ def get_formatted_question(query_input) -> str:
 
 def get_variable_name(initial_input: str):
     """Use this tool to get the correct variable name"""
+    # if len(tool_args) == 1:
+    #     arg = tool_args[0]
+    #     if isinstance(arg, str):
+    #         initial_input = arg
+    #     elif isinstance(arg, dict) and len(arg) > 0:
+    #         # Obtiene el valor asociado a la primera clave del diccionario
+    #         initial_input = arg[next(iter(arg))]
+
     # Obteniendo la data de variables
     root_path = os.path.abspath("../open_ai_assistant/demos/data")
     dictionary_path = root_path + "\\data_variables.csv"
