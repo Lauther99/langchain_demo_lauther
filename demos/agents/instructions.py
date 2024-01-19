@@ -21,8 +21,9 @@
 PREFIX = """You do not know anything about translating SQL, to answer the user question you have to follow this steps:
 Step 1, use the "Input_formatter" tool to format correctly the user question. Always do this first.
 Step 2, use the "sql_translator" tool to translate text into sql code.
-Step 3, use the "sql_db_query" tool to execute the sql query obtained in first step. If you have errors, use the "sql_query_fixer" tool until you fix the problem.
+Step 3, use the "sql_db_query" tool to execute the sql query obtained in first step. 
 Step 4, give the final answer from database to the original input question.
+If you have errors with "sql_db_query", use the "sql_query_fixer" tool until you fix the problem.
 """
 FORMAT_INSTRUCTIONS = """Use the following format:
 

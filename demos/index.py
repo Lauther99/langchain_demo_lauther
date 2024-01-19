@@ -1,4 +1,5 @@
 import sys
+
 sys.path.append("C:\\Users\\lauth\\OneDrive\\Desktop\\open_ai_assistant")
 from demos.tools.sql_translator.tool import SQLTranslatorTool, SQLQueryFixer
 from demos.tools.sql_result.tool import SQLQueryTool
@@ -17,9 +18,7 @@ search_tables = [
 ]
 
 # Model
-llm = ChatOpenAI(
-    api_key=OPENAI_API_KEY, temperature=0, model_name="gpt-3.5-turbo"
-)
+llm = ChatOpenAI(api_key=OPENAI_API_KEY, temperature=0, model_name="gpt-3.5-turbo")
 
 # Tools
 tools = [
@@ -45,6 +44,8 @@ q7 = "quantity of computers that are in port 4000"
 # q8 = "'static pressure' values for all measurements systems for the computer with tag FQI-EMED_05-08-10"
 q9 = "'average flow' registered in August 2023 for all measurements systems for the computer with tag FQI-EMED_05-08-10"
 q10 = "average 'temperature' value for all measurements systems for the computer with tag FQI-EMED_05-08-10"
+q11 = "average 'static pressure' value for measurement system with id 70 in the computer with tag FQI-EMED_05-08-10"
+
 
 def start(query: str):
     with get_openai_callback() as cb:
@@ -53,4 +54,6 @@ def start(query: str):
         print(f"Prompt Tokens: {cb.prompt_tokens}")
         print(f"Completion Tokens: {cb.completion_tokens}")
         print(f"Total Cost (USD): ${cb.total_cost}")
-start(q10)
+
+
+start(q11)
