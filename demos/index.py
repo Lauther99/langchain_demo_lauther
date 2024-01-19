@@ -53,4 +53,4 @@ def start(query: str):
         print(f"Prompt Tokens: {cb.prompt_tokens}")
         print(f"Completion Tokens: {cb.completion_tokens}")
         print(f"Total Cost (USD): ${cb.total_cost}")
-start(q9)
+start(q10)
