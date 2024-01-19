@@ -44,7 +44,7 @@ q7 = "quantity of computers that are in port 4000"
 # q8 = "'static pressure' values for all measurements systems for the computer with tag FQI-EMED_05-08-10"
 q9 = "'average flow' registered in August 2023 for all measurements systems for the computer with tag FQI-EMED_05-08-10"
 q10 = "average 'temperature' value for all measurements systems for the computer with tag FQI-EMED_05-08-10"
-q11 = "average 'static pressure' value for measurement system with id 70 in the computer with tag FQI-EMED_05-08-10"
+q11 = "values of 'static pressure' for measurement system with id 70 in the computer with tag FQI-EMED_05-08-10"
 
 
 def start(query: str):

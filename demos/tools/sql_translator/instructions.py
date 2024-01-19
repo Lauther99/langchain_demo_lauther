@@ -1,7 +1,7 @@
 system_instruction = """You are a text-to-SQL translator. You write Microsoft SQL Server 2014 code based on plain-language prompts.
 Your only output always must be SQL code. Do not include any other text. ONLY SQL CODE."""
 
-sql_translator_instruction = """Translate '{query}' to a syntactically-correct Microsoft SQL Server 2014 query, DO NOT FORGET to include SQL SCHEMA 'dbo_v2' for tables in your query result"""
+sql_translator_instruction = """Translate '{query}' to a syntactically-correct Microsoft SQL Server 2014 query, DO NOT FORGET to include SQL SCHEMA 'dbo_v2' for tables in your query result and ALWAYS make an SELECT TOP 10 results if you have lists"""
 
 content_error_instruction = """
 Your last code gives me this error: '''{error_message}'''.
