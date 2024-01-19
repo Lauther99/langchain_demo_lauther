@@ -20,7 +20,7 @@ class SQLQueryTool(BaseTool):
     name = "sql_db_query"
     description: str = """
     Input to this tool is a detailed and correct SQL query, output is a result from the database.
-    If the query is not correct, an error message will be returned.
+    If the query is not correct, an error message will be returned and you have to use 'sql_query_fixer' tool.
     """
     # If an error is returned, rewrite the query, check the query, and try again.
 
