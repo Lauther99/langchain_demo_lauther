@@ -33,14 +33,14 @@ def get_sql_query(search_tables, db_schema, query_input) -> str:
 
     prompt_template = """
     {system_instruction}
-    Using the schema {db_schema} and this database information:\n'''\n{description}\n'''\n{sql_translator}
+    Using the schema '{db_schema}' and database information below:\n'''\n{description}\n'''\n{sql_translator_instruction}
     """
     prompt = PromptTemplate(
         input_variables=[
             "system_instruction",
             "db_schema",
             "description",
-            "sql_translator",
+            "sql_translator_instruction",
         ],
         template=prompt_template,
     )
@@ -48,7 +48,7 @@ def get_sql_query(search_tables, db_schema, query_input) -> str:
     formated_prompt = prompt.format(
         db_schema=db_schema,
         description=description,
-        sql_translator=sql_translator_instruction.format(query=query_input),
+        sql_translator_instruction=sql_translator_instruction.format(query=query_input),
         system_instruction=system_instruction,
     )
 
@@ -65,7 +65,7 @@ def get_sql_query(search_tables, db_schema, query_input) -> str:
                 system_instruction=" ",
                 db_schema=db_schema,
                 description=description,
-                sql_translator=sql_translator_instruction.format(query=query_input),
+                sql_translator_instruction=sql_translator_instruction.format(query=query_input),
             ),
         },
         {"role": "assistant", "content": response.content},
@@ -139,7 +139,7 @@ class BaseSQLDatabaseTool(BaseModel):
 
 class SQLTranslatorTool(BaseSQLDatabaseTool, BaseTool):
     name = "sql_translator"
-    description = "this tool allows you to translate a text to SQL code or rewrite the query. Input to this tool is a formatted user question, not a code, only the output to this tool is a SQL code"
+    description = "this tool allows you to translate a text to SQL code or rewrite the query. Input to this tool is a formatted user question, NOT A CODE, ONLY THE OUTPUT is a SQL code"
 
     def _run(self, query_input: str):
         return get_sql_query(self.search_tables, self.db_schema, query_input)
@@ -150,7 +150,7 @@ class SQLTranslatorTool(BaseSQLDatabaseTool, BaseTool):
 
 class SQLQueryFixer(BaseTool):
     name = "sql_query_fixer"
-    description = "this tool allows you to correct and rewrite the query. Input to this tool is only the error message from database failed query, only the output to this tool is a SQL code"
+    description = "this tool allows you to correct and rewrite the query. Input to this tool is only the error message from database failed query from 'sql_db_query' tool, only the output to this tool is a SQL code. Use this tool as many times as you need"
 
     def _run(self, query_error: str):
         return sql_error_fixer(query_error)
