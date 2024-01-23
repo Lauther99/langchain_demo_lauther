@@ -42,7 +42,7 @@ q9 = "value of 'average flow' registered in August 2023 for all measurements sys
 q10 = "average value of 'temperature' for all measurements systems for the computer with tag FQI-EMED_05-08-10"
 q11 = "average value of 'static pressure' for measurement system with id 70 in the computer with tag FQI-EMED_05-08-10"
 q12 = "average value for 'temperature' from measurement system with id 70 in the computer with tag FQI-EMED_05-08-10 registered in August 2023"
-q13 = "promedio de los valores de 'temperatura' registrados en Agosto del 2023 del sistema de medicion con id 70 en el computador con tag FQI-EMED_05-08-10"
+q13 = "promedio de los valores para 'temperatura' registrados en Agosto del 2023 del sistema de medicion con id 70 en el computador con tag FQI-EMED_05-08-10"
 
 
 def start(query: str):

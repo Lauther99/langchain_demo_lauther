@@ -17,6 +17,7 @@ from demos.tools.question_formater.instructions import (
     PREFIX,
     INPUT_FORMATER_TOOL_DESCRIPTION,
     GET_VARIABLE_NAME_FUNCTION,
+    VARIABLES_FILE_PATH
 )
 from langchain.document_loaders.csv_loader import CSVLoader
 import os
@@ -53,8 +54,7 @@ def get_variable_name(initial_input: str, lan: str = "en"):
     """Use this tool to get the correct variable name"""
     # Obteniendo la data de variables
     root_path = os.path.abspath("../open_ai_assistant/demos/data")
-    file_extension = "_en.csv" if lan == "en" else "_es.csv"
-    dictionary_path = os.path.join(root_path, "data_variables" + file_extension)
+    dictionary_path = os.path.join(root_path, VARIABLES_FILE_PATH[lan])
     loader = CSVLoader(
         file_path=dictionary_path, encoding="utf-8", csv_args={"delimiter": ";"}
     )

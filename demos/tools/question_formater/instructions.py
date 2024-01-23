@@ -8,6 +8,11 @@ INPUT_FORMATER_TOOL_DESCRIPTION = {
     "es": "Usa esta herramienta para pre procesar y formatear la pregunta original del usuario. La entrada a esta herramienta es la pregunta original NO FORMATEADA del usuario, NO DEBES crear un diccionario para entrar a esta herramienta, usa la pregunta original como una cadena. El resultado de salida de esta herramienta es la pregunta formateada.",
 }
 
+VARIABLES_FILE_PATH = {
+    "en" : "data_variables_en.csv",
+    "es" : "data_variables_es.csv"
+}
+
 GET_VARIABLE_NAME_FUNCTION = {
     "en": """
         You are a expert petroleum engineer
