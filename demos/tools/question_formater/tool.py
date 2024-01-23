@@ -53,7 +53,8 @@ def get_variable_name(initial_input: str, lan: str = "en"):
     """Use this tool to get the correct variable name"""
     # Obteniendo la data de variables
     root_path = os.path.abspath("../open_ai_assistant/demos/data")
-    dictionary_path = root_path + "\\data_variables.csv"
+    file_extension = "_en.csv" if lan == "en" else "_es.csv"
+    dictionary_path = os.path.join(root_path, "data_variables" + file_extension)
     loader = CSVLoader(
         file_path=dictionary_path, encoding="utf-8", csv_args={"delimiter": ";"}
     )

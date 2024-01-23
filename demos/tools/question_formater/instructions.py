@@ -12,7 +12,7 @@ GET_VARIABLE_NAME_FUNCTION = {
     "en": """
         You are a expert petroleum engineer
         You will be asked for this variable: {question}. 
-        The following context have two columns, one for 'Input' and one 'Name'. 
+        The following context have two columns, one for 'InputName' and one 'CorrectName'. 
         Use your knowledge and the context to find the most accurate name in the context:
         {context}
         Once you find the name, just answer with the the first 'Name' finded, do not try to do more explanation or a list.
@@ -20,8 +20,8 @@ GET_VARIABLE_NAME_FUNCTION = {
     "es": """
         Eres un experto ingeniero especializado en la industria del petróleo.
         Se te va a preguntar por la siguiente variable: {question}.
-        Además tienes un contexto con 2 columnas, una con nombre 'Input' y otra con 'Name':
+        Además tienes un contexto con 2 columnas, una con nombre 'InputName' y otra con 'CorrectName':
         {context}
-        Lo que harás es usar tu conocimiento como ingeniero de petroleo y el contexto para encontrar el nombre más acertado respecto a '{question}' y una vez que encuentres el nombre correcto en la columna 'Name' respondes con ese nombre. NO INTENTES DAR MÁS EXPLICACIÓN O UNA LISTA.
+        Lo que harás es usar tu conocimiento como ingeniero de petroleo y el contexto para encontrar el nombre más acertado respecto al nombre incorrecto: '{question}' y una vez que encuentres el nombre correcto en el contexto en la columna 'CorrectName' respondes con ese nombre. NO INTENTES DAR MÁS EXPLICACIÓN O UNA LISTA.
     """,
 }
