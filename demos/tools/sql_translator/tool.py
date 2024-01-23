@@ -3,9 +3,12 @@ import sys
 sys.path.append("C:\\Users\\lauth\\OneDrive\\Desktop\\open_ai_assistant")
 
 from demos.tools.sql_translator.instructions import (
-    sql_translator_instruction,
-    system_instruction,
-    content_error_instruction,
+    SQL_TRANSLATOR_INSTRUCTION,
+    SYSTEM_INSTRUCTION,
+    PROMPT_TEMPLATE,
+    ERROR_INSTRUCTION,
+    SQL_TRANSLATOR_TOOL_DESCRIPTION,
+    SQL_FIXER_TOOL_DESCRIPTION,
 )
 from demos.mongo.users_manager import save_to_chat, find_user
 from demos.data.data_info import tables
@@ -28,13 +31,9 @@ from langchain_openai import ChatOpenAI
 from langchain_community.callbacks import get_openai_callback
 
 
-def get_sql_query(search_tables, db_schema, query_input) -> str:
-    description = get_description(db_schema, search_tables)
+def sql_translate(search_tables, db_schema, query_input, lan="en") -> str:
+    description = get_description(db_schema, search_tables, lan)
 
-    prompt_template = """
-    {system_instruction}
-    Using the schema {db_schema} and this database information:\n'''\n{description}\n'''\n{sql_translator}
-    """
     prompt = PromptTemplate(
         input_variables=[
             "system_instruction",
@@ -42,14 +41,14 @@ def get_sql_query(search_tables, db_schema, query_input) -> str:
             "description",
             "sql_translator",
         ],
-        template=prompt_template,
+        template=PROMPT_TEMPLATE[lan],
     )
 
     formated_prompt = prompt.format(
         db_schema=db_schema,
         description=description,
-        sql_translator=sql_translator_instruction.format(query=query_input),
-        system_instruction=system_instruction,
+        sql_translator=SQL_TRANSLATOR_INSTRUCTION[lan].format(query=query_input),
+        system_instruction=SYSTEM_INSTRUCTION[lan],
     )
 
     llm = ChatOpenAI(api_key=OPENAI_API_KEY, model="gpt-3.5-turbo", temperature=0)
@@ -58,14 +57,16 @@ def get_sql_query(search_tables, db_schema, query_input) -> str:
         response = llm.invoke(input=formated_prompt)
         print(f"Total Tokens: {cb.total_tokens}")
     messages = [
-        {"role": "system", "content": system_instruction},
+        {"role": "system", "content": SYSTEM_INSTRUCTION[lan]},
         {
             "role": "user",
-            "content": prompt_template.format(
+            "content": PROMPT_TEMPLATE[lan].format(
                 system_instruction=" ",
                 db_schema=db_schema,
                 description=description,
-                sql_translator=sql_translator_instruction.format(query=query_input),
+                sql_translator=SQL_TRANSLATOR_INSTRUCTION[lan].format(
+                    query=query_input
+                ),
             ),
         },
         {"role": "assistant", "content": response.content},
@@ -76,7 +77,7 @@ def get_sql_query(search_tables, db_schema, query_input) -> str:
     return response.content or ""
 
 
-def sql_error_fixer(error_message) -> str:
+def sql_error_fixer(error_message, db_schema, lan="en") -> str:
     user = find_user("51989915557")
     messages = user["chats"] or []
 
@@ -100,7 +101,9 @@ def sql_error_fixer(error_message) -> str:
         llm=llm, chat_memory=memory_history, input_key="input", memory_key="history"
     )
     conversation = ConversationChain(llm=llm, verbose=True, memory=window_memory)
-    error_input = content_error_instruction.format(error_message=error_message)
+    error_input = ERROR_INSTRUCTION[lan].format(
+        error_message=error_message, db_schema=db_schema
+    )
     response = ""
 
     with get_openai_callback() as cb:
@@ -127,33 +130,53 @@ def sql_error_fixer(error_message) -> str:
     return response or ""
 
 
-class BaseSQLDatabaseTool(BaseModel):
-    """Base tool for interacting with a SQL database."""
-
-    search_tables: list[str] = Field(exclude=True)
-    db_schema: str = Field(exclude=True)
-
-    class Config(BaseTool.Config):
-        pass
-
-
-class SQLTranslatorTool(BaseSQLDatabaseTool, BaseTool):
+class SQLTranslatorTool(BaseTool):
     name = "sql_translator"
-    description = "this tool allows you to translate a text to SQL code or rewrite the query. Input to this tool is a formatted user question, not a code, only the output to this tool is a SQL code"
+    lan = "en"
+    description = SQL_TRANSLATOR_TOOL_DESCRIPTION[lan]
+    search_tables = []
+    db_schema = "dbo_v2"
+
+    def __init__(self, lan="en", search_tables=[], db_schema="dbo_v2"):
+        super().__init__()
+        self.lan = lan
+        self.description = SQL_TRANSLATOR_TOOL_DESCRIPTION[lan]
+        self.search_tables = search_tables
+        self.db_schema = db_schema
 
     def _run(self, query_input: str):
-        return get_sql_query(self.search_tables, self.db_schema, query_input)
+        return sql_translate(
+            search_tables=self.search_tables,
+            db_schema=self.db_schema,
+            query_input=query_input,
+            lan=self.lan,
+        )
 
     def _arun(self, query_input: str):
-        return get_sql_query(self.search_tables, self.db_schema, query_input)
+        return sql_translate(
+            search_tables=self.search_tables,
+            db_schema=self.db_schema,
+            query_input=query_input,
+            lan=self.lan,
+        )
 
 
 class SQLQueryFixer(BaseTool):
     name = "sql_query_fixer"
-    description = "this tool allows you to correct and rewrite the query. Input to this tool is only the error message from database failed query, only the output to this tool is a SQL code"
+    lan = "en"
+    description = SQL_FIXER_TOOL_DESCRIPTION[lan]
+    db_schema = "dbo_v2"
+
+    def __init__(self, lan="en", db_schema = "dbo_v2"):
+        super().__init__()
+        self.lan = lan
+        self.db_schema = db_schema
+        self.description = SQL_FIXER_TOOL_DESCRIPTION[lan]
 
     def _run(self, query_error: str):
-        return sql_error_fixer(query_error)
+        return sql_error_fixer(
+            error_message=query_error, db_schema=self.db_schema, lan=self.lan
+        )
 
     def _arun(self, query_error: str):
         raise NotImplementedError("This tool does not support async")
@@ -161,7 +184,7 @@ class SQLQueryFixer(BaseTool):
 
 # Tests
 
-# Test get_sql_query()
+# Test sql_translate()
 # search_tables = [
 #     "fcs_computadores",
 #     "fcs_computador_medidor",
@@ -170,7 +193,7 @@ class SQLQueryFixer(BaseTool):
 #     "var_variable_datos",
 # ]
 # query = "Values of the 'Pressão Estática (kPa)' registered in october 17th in 2022 for all measurements systems for the computer with tag FQI-EMED_05-08-10"
-# get_sql_query(search_tables, "dbo_v2", query)
+# sql_translate(search_tables, "dbo_v2", query)
 
 
 # # Test sql_error_fixer()

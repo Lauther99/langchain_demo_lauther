@@ -13,7 +13,11 @@ from langchain.llms.openai import OpenAI
 from langchain_openai import ChatOpenAI
 from langchain_community.callbacks import get_openai_callback
 from demos.agents.agent import create_agent
-from demos.tools.question_formater.instructions import PREFIX
+from demos.tools.question_formater.instructions import (
+    PREFIX,
+    INPUT_FORMATER_TOOL_DESCRIPTION,
+    GET_VARIABLE_NAME_FUNCTION,
+)
 from langchain.document_loaders.csv_loader import CSVLoader
 import os
 from langchain.vectorstores.faiss import FAISS
@@ -45,7 +49,7 @@ def get_formatted_question(query_input) -> str:
     return response.get("output", query_input)
 
 
-def get_variable_name(initial_input: str):
+def get_variable_name(initial_input: str, lan: str = "en"):
     """Use this tool to get the correct variable name"""
     # Obteniendo la data de variables
     root_path = os.path.abspath("../open_ai_assistant/demos/data")
@@ -62,17 +66,9 @@ def get_variable_name(initial_input: str):
         openai_api_key=OPENAI_API_KEY, temperature=0, model_name="gpt-3.5-turbo"
     )
 
-    prompt_template = """
-        You are a expert petroleum engineer
-        You will be asked for this variable: {question}. 
-        The following context have two columns, one for 'Input' and one 'Name'. 
-        Use your knowledge and the context to find the most accurate name in the context:
-        {context}
-        Once you find the name, just answer with the the first 'Name' finded, do not try to do more explanation or a list.
-        Answer:"""
-
     prompt = PromptTemplate(
-        template=prompt_template, input_variables=["context", "question"]
+        template=GET_VARIABLE_NAME_FUNCTION[lan],
+        input_variables=["context", "question"],
     )
 
     chain = RetrievalQA.from_chain_type(
@@ -88,26 +84,33 @@ def get_variable_name(initial_input: str):
     def procesar(match):
         result = chain.invoke(str(match))
         final_res = result["result"]
-        return final_res
+        return f"'{final_res}'"
 
-    nueva_oracion = re.sub(pattern, procesar, initial_input)
+    res = re.sub(pattern, procesar, initial_input)
 
-    return nueva_oracion
+    return res
 
 
 class InputFormatterTool(BaseTool):
     name = "Input_formatter"
-    description = "Use this tool to pre process and format the user question. Input to this tool is the user unformatted question, output is a question formatted"
+    lan = "en"
+    description = INPUT_FORMATER_TOOL_DESCRIPTION[lan]
+
+    def __init__(self, lan="en"):
+        super().__init__()
+        self.lan = lan
+        self.description = INPUT_FORMATER_TOOL_DESCRIPTION[lan]
 
     def _run(self, initial_input: str):
-        return get_variable_name(initial_input)
+        return get_variable_name(initial_input=initial_input, lan=self.lan)
 
     def _arun(self, initial_input: str):
-        return get_variable_name(initial_input)
+        return get_variable_name(initial_input=initial_input, lan=self.lan)
 
 
 # # Test
-# response = get_variable_name_v2(
-#     "average of 'static pressure' values registered between october 17th in 2022 and october 31th in 2022 for the measurement system with tag EMED-3138.09"
+# tool = InputFormatterTool(lan="es")
+# response = tool._run(
+#     "average of 'presión estatica' values registered between october 17th in 2022 and october 31th in 2022 for the measurement system with tag EMED-3138.09"
 # )
 # print(response)

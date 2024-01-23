@@ -1,4 +1,4 @@
-from demos.agents.instructions import PREFIX, FORMAT_INSTRUCTIONS, SUFFIX
+from demos.agents.instructions import PREFIX_INSTRUCTION, FORMAT_INSTRUCTIONS, SUFFIX
 from typing import Any, Dict, List, Optional
 
 from langchain.callbacks.base import BaseCallbackManager
@@ -17,10 +17,10 @@ from langchain.agents.output_parsers import OpenAIFunctionsAgentOutputParser
 def create_agent(
     llm: BaseLanguageModel,
     callback_manager: Optional[BaseCallbackManager] = None,
-    prefix: str = PREFIX,
-    suffix: Optional[str] = SUFFIX,
-    format_instructions: str = FORMAT_INSTRUCTIONS,
-    input_variables: Optional[List[str]] = None,
+    lan: str = "es",
+    # suffix: Optional[str] = SUFFIX,
+    # format_instructions: str = FORMAT_INSTRUCTIONS,
+    # input_variables: Optional[List[str]] = None,
     max_iterations: Optional[int] = 5,
     max_execution_time: Optional[float] = None,
     early_stopping_method: str = "force",
@@ -49,7 +49,7 @@ def create_agent(
         [
             (
                 "system",
-                prefix,
+                PREFIX_INSTRUCTION[lan],
             ),
             ("user", "{input}"),
             MessagesPlaceholder(variable_name="agent_scratchpad"),
