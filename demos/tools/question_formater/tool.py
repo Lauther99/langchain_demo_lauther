@@ -2,7 +2,7 @@ import sys
 
 sys.path.append("C:\\Users\\lauth\\OneDrive\\Desktop\\open_ai_assistant")
 
-from demos.config.env_config import OPENAI_API_KEY
+from demos.config.env_config import OPENAI_API_KEY, OPENAI_MODEL
 from demos.tools.question_formater.variables import VariablesTool
 from langchain.tools import BaseTool
 from langchain.pydantic_v1 import BaseModel, Field
@@ -50,11 +50,11 @@ def get_formatted_question(query_input) -> str:
     return response.get("output", query_input)
 
 
-def get_variable_name(initial_input: str, lan: str = "en"):
+def get_variable_name(initial_input: str):
     """Use this tool to get the correct variable name"""
     # Obteniendo la data de variables
     root_path = os.path.abspath("../open_ai_assistant/demos/data")
-    dictionary_path = os.path.join(root_path, VARIABLES_FILE_PATH[lan])
+    dictionary_path = os.path.join(root_path, VARIABLES_FILE_PATH)
     loader = CSVLoader(
         file_path=dictionary_path, encoding="utf-8", csv_args={"delimiter": ";"}
     )
@@ -64,11 +64,11 @@ def get_variable_name(initial_input: str, lan: str = "en"):
 
     # Modelo LLM
     llm = ChatOpenAI(
-        openai_api_key=OPENAI_API_KEY, temperature=0, model_name="gpt-3.5-turbo"
+        openai_api_key=OPENAI_API_KEY, temperature=0, model_name=OPENAI_MODEL
     )
 
     prompt = PromptTemplate(
-        template=GET_VARIABLE_NAME_FUNCTION[lan],
+        template=GET_VARIABLE_NAME_FUNCTION,
         input_variables=["context", "question"],
     )
 
@@ -94,23 +94,20 @@ def get_variable_name(initial_input: str, lan: str = "en"):
 
 class InputFormatterTool(BaseTool):
     name = "Input_formatter"
-    lan = "en"
-    description = INPUT_FORMATER_TOOL_DESCRIPTION[lan]
+    description = INPUT_FORMATER_TOOL_DESCRIPTION
 
-    def __init__(self, lan="en"):
+    def __init__(self):
         super().__init__()
-        self.lan = lan
-        self.description = INPUT_FORMATER_TOOL_DESCRIPTION[lan]
 
     def _run(self, initial_input: str):
-        return get_variable_name(initial_input=initial_input, lan=self.lan)
+        return get_variable_name(initial_input=initial_input)
 
     def _arun(self, initial_input: str):
-        return get_variable_name(initial_input=initial_input, lan=self.lan)
+        return get_variable_name(initial_input=initial_input)
 
 
 # # Test
-# tool = InputFormatterTool(lan="es")
+# tool = InputFormatterTool()
 # response = tool._run(
 #     "average of 'presión estatica' values registered between october 17th in 2022 and october 31th in 2022 for the measurement system with tag EMED-3138.09"
 # )

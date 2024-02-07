@@ -9,30 +9,51 @@ from demos.tools.sql_translator.instructions import (
     ERROR_INSTRUCTION,
     SQL_TRANSLATOR_TOOL_DESCRIPTION,
     SQL_FIXER_TOOL_DESCRIPTION,
+    SQL_FILTER_TOOL
 )
 from demos.mongo.users_manager import save_to_chat, find_user
 from demos.data.data_info import tables
-from demos.config.env_config import OPENAI_API_KEY
+from demos.config.env_config import OPENAI_API_KEY, VANNA_API_KEY, VANNA_MODEL, OPENAI_MODEL
 from demos.utils.getDescription import get_description
 from langchain.tools import BaseTool
-from langchain.pydantic_v1 import BaseModel, Field
 from langchain.prompts import PromptTemplate
 from langchain.memory import (
     ConversationSummaryBufferMemory,
     ConversationBufferMemory,
     ChatMessageHistory,
 )
-from langchain.chains import ConversationChain, LLMChain
-from langchain.llms.openai import OpenAI
-from langchain.llms.huggingface_hub import HuggingFaceHub
 
 from langchain.schema import AIMessage, HumanMessage, SystemMessage
 from langchain_openai import ChatOpenAI
 from langchain_community.callbacks import get_openai_callback
+from langchain.agents import tool
 
+from vanna.remote import VannaDefault
 
-def sql_translate(search_tables, db_schema, query_input, lan="en") -> str:
-    description = get_description(db_schema, search_tables, lan)
+@tool
+def sql_translator(question) -> str:
+    '''
+    this tool allows you to translate a text to SQL code or rewrite the query. Input to this tool is the user question, NOT A SQL CODE, ONLY THE OUTPUT  to this tool is a SQL code
+    '''
+    vn = VannaDefault(model="test-lauther-2", api_key="7e2cde60a92a41bd988a444d6fd1dc22")
+    res = vn.generate_sql(question=question)
+    return res
+    
+@tool
+def sql_filter_tool(question :str)  -> bool:
+    '''
+    Useful when you need to filter the user question if need to be translated to SQL code or can easily be aswered by yourself, input to this tool is the user question and the output to this tool is a boolean True or False
+    '''
+    vn = VannaDefault(model="test-lauther-3", api_key="7e2cde60a92a41bd988a444d6fd1dc22")
+    res = vn.generate_sql(question=question)
+    if (res == "No SELECT statement could be found in the SQL code"):
+        return False
+    else:
+        return True
+
+# Antiguas tools
+def sql_translate(search_tables, db_schema, query_input) -> str:
+    description = get_description(db_schema, search_tables)
 
     prompt = PromptTemplate(
         input_variables=[
@@ -41,30 +62,30 @@ def sql_translate(search_tables, db_schema, query_input, lan="en") -> str:
             "description",
             "sql_translator",
         ],
-        template=PROMPT_TEMPLATE[lan],
+        template=PROMPT_TEMPLATE,
     )
 
     formated_prompt = prompt.format(
         db_schema=db_schema,
         description=description,
-        sql_translator=SQL_TRANSLATOR_INSTRUCTION[lan].format(query=query_input),
-        system_instruction=SYSTEM_INSTRUCTION[lan],
+        sql_translator=SQL_TRANSLATOR_INSTRUCTION.format(query=query_input),
+        system_instruction=SYSTEM_INSTRUCTION,
     )
 
-    llm = ChatOpenAI(api_key=OPENAI_API_KEY, model="gpt-3.5-turbo", temperature=0)
+    llm = ChatOpenAI(api_key=OPENAI_API_KEY, model=OPENAI_MODEL, temperature=0)
     response = ""
     with get_openai_callback() as cb:
         response = llm.invoke(input=formated_prompt)
         print(f"Total Tokens: {cb.total_tokens}")
     messages = [
-        {"role": "system", "content": SYSTEM_INSTRUCTION[lan]},
+        {"role": "system", "content": SYSTEM_INSTRUCTION},
         {
             "role": "user",
-            "content": PROMPT_TEMPLATE[lan].format(
+            "content": PROMPT_TEMPLATE.format(
                 system_instruction=" ",
                 db_schema=db_schema,
                 description=description,
-                sql_translator=SQL_TRANSLATOR_INSTRUCTION[lan].format(
+                sql_translator=SQL_TRANSLATOR_INSTRUCTION.format(
                     query=query_input
                 ),
             ),
@@ -76,12 +97,11 @@ def sql_translate(search_tables, db_schema, query_input, lan="en") -> str:
     save_to_chat(messages, "51989915557")
     return response.content or ""
 
-
-def sql_error_fixer(error_message, db_schema, lan="en") -> str:
+def sql_error_fixer(error_message, db_schema) -> str:
     user = find_user("51989915557")
     messages = user["chats"] or []
 
-    llm = ChatOpenAI(api_key=OPENAI_API_KEY, model="gpt-3.5-turbo")
+    llm = ChatOpenAI(api_key=OPENAI_API_KEY, model=OPENAI_MODEL)
 
     # Creando la memoria
     memory_messages = []
@@ -101,7 +121,7 @@ def sql_error_fixer(error_message, db_schema, lan="en") -> str:
         llm=llm, chat_memory=memory_history, input_key="input", memory_key="history"
     )
     conversation = ConversationChain(llm=llm, verbose=True, memory=window_memory)
-    error_input = ERROR_INSTRUCTION[lan].format(
+    error_input = ERROR_INSTRUCTION.format(
         error_message=error_message, db_schema=db_schema
     )
     response = ""
@@ -129,72 +149,20 @@ def sql_error_fixer(error_message, db_schema, lan="en") -> str:
     # print(response)
     return response or ""
 
-
-class SQLTranslatorTool(BaseTool):
-    name = "sql_translator"
-    lan = "en"
-    description = SQL_TRANSLATOR_TOOL_DESCRIPTION[lan]
-    search_tables = []
-    db_schema = "dbo_v2"
-
-    def __init__(self, lan="en", search_tables=[], db_schema="dbo_v2"):
-        super().__init__()
-        self.lan = lan
-        self.description = SQL_TRANSLATOR_TOOL_DESCRIPTION[lan]
-        self.search_tables = search_tables
-        self.db_schema = db_schema
-
-    def _run(self, query_input: str):
-        return sql_translate(
-            search_tables=self.search_tables,
-            db_schema=self.db_schema,
-            query_input=query_input,
-            lan=self.lan,
-        )
-
-    def _arun(self, query_input: str):
-        return sql_translate(
-            search_tables=self.search_tables,
-            db_schema=self.db_schema,
-            query_input=query_input,
-            lan=self.lan,
-        )
-
-
 class SQLQueryFixer(BaseTool):
     name = "sql_query_fixer"
-    lan = "en"
-    description = SQL_FIXER_TOOL_DESCRIPTION[lan]
+    description = SQL_FIXER_TOOL_DESCRIPTION
     db_schema = "dbo_v2"
 
-    def __init__(self, lan="en", db_schema = "dbo_v2"):
+    def __init__(self, db_schema = "dbo_v2"):
         super().__init__()
-        self.lan = lan
         self.db_schema = db_schema
-        self.description = SQL_FIXER_TOOL_DESCRIPTION[lan]
+        self.description = SQL_FIXER_TOOL_DESCRIPTION
 
     def _run(self, query_error: str):
         return sql_error_fixer(
-            error_message=query_error, db_schema=self.db_schema, lan=self.lan
+            error_message=query_error, db_schema=self.db_schema
         )
 
     def _arun(self, query_error: str):
         raise NotImplementedError("This tool does not support async")
-
-
-# Tests
-
-# Test sql_translate()
-# search_tables = [
-#     "fcs_computadores",
-#     "fcs_computador_medidor",
-#     "med_sistema_medicion",
-#     "var_tipo_variable",
-#     "var_variable_datos",
-# ]
-# query = "Values of the 'Pressão Estática (kPa)' registered in october 17th in 2022 for all measurements systems for the computer with tag FQI-EMED_05-08-10"
-# sql_translate(search_tables, "dbo_v2", query)
-
-
-# # Test sql_error_fixer()
-# sql_error_fixer("[42S02] [Microsoft][ODBC Driver 11 for SQL Server][SQL Server]Invalid object name 'fcs_computador_medidor'. (208) (SQLExecDirectW)")

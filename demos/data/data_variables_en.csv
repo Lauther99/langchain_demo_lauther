@@ -1,15 +1,15 @@
 InputName;CorrectName
 Density;Densidade (kg/m3)
-Differential pressure;Press�o Diferencial (kPa) / Frequencia (Hz)
-Temperature;Temperatura (�C)
+Differential pressure;Pressão Diferencial (kPa) / Frequencia (Hz)
+Temperature;Temperatura (°C)
 bsw concentration;BSW (%)
-Gross flow;Vaz�o Bruta
-Static pressure;Press�o Est�tica (kPa)
-corrected flow;Vaz�o Corrigida
+Gross flow;Vazão Bruta
+Static pressure;Pressão Estática (kPa)
+corrected flow;Vazão Corrigida
 current;Corriente (mA)
 resistance;Resistencia
 viscosity;Viscosidade
-massico;M�ssico
+massico;Mássico
 flow net;Flow Net (m3/h)
 flow rate per day;Flow Rate per day (km3/day)
 flow NSV;Flow NSV (m3/h)
@@ -22,9 +22,9 @@ CPL;CPL
 YOU-F;VCF
 specific mass (P,T);Massa especifica (P,T)
 specific mass (Ref);Massa especifica (Ref)
-Average flow;Vaz�o m�dia
-low flow alarm;Alarme baixa vaz�o
-high flow alarm;Alarme alta vaz�o
+Average flow;Vazão média
+low flow alarm;Alarme baixa vazão
+high flow alarm;Alarme alta vazão
 current density;Densidade atual
 previous density;Densidade anterior
 lower limit T;Limite Inferior T
@@ -51,7 +51,7 @@ octane mole;Mol (%) octano
 nonane mole;Mol (%) nonano
 decane mole;Mol (%) decano
 H2S mole;Mol (%) H2S
-water mole;Mol (%) �gua
+water mole;Mol (%) água
 helium mole;Mol (%) helio
 oxygen mole;Mol (%) oxigenio
 CO mole;Mol (%) CO
@@ -61,7 +61,7 @@ qmax mole;Qmax
 dp cut off;DP Cut off
 length;Comprimento
 relative humidity;Umidade Relativa
-absolute pressure;Press�o Absoluta
+absolute pressure;Pressão Absoluta
 BSW no percentage;BSW
 RS;RS
 FE;FE
@@ -81,9 +81,9 @@ RS_Summit;RS_Summit
 Compressibility Factor-Z;Compressibility Factor-Z
 Reference density;Densidade referencia
 MDR liquidity volume;Vol Liq MDR (Sm3)
-Multivariable;Multivari�vel
+Multivariable;Multivariável
 Level;Nivel
-Average flow in km3/h;Vaz�o m�dia (km3/h)
+Average flow in km3/h;Vazão média (km3/h)
 Net Volume Produced ;Vol Produzido Net (m3)
 NSV Volume Produced;Vol Produzido NSV (m3)
 Net Transferred Volume;Vol Transferido Net (m3)
