@@ -23,17 +23,3 @@ def sql_db_query(sql_query: str):
     finally:
         cursor.close()
 
-# class SQLQueryTool(BaseTool):
-#     name = "sql_db_query"
-#     description: str = SQL_QUERY_TOOL_DESCRIPTION
-#     # If an error is returned, rewrite the query, check the query, and try again.
-
-#     def __init__(self):
-#         super().__init__()
-#         self.description = SQL_QUERY_TOOL_DESCRIPTION
-
-#     def _run(self, sql_query):
-#         return sql_db_query(sql_query)
-
-#     def _arun(self):
-#         raise NotImplementedError("This tool does not support async")

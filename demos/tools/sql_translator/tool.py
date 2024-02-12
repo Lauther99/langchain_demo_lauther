@@ -36,6 +36,7 @@ def sql_translator(question) -> str:
     this tool allows you to translate a text to SQL code or rewrite the query. Input to this tool is the user question, NOT A SQL CODE, ONLY THE OUTPUT  to this tool is a SQL code
     '''
     vn = VannaDefault(model="test-lauther-2", api_key="7e2cde60a92a41bd988a444d6fd1dc22")
+    vn.run_sql
     res = vn.generate_sql(question=question)
     return res
     
@@ -50,6 +51,14 @@ def sql_filter_tool(question :str)  -> bool:
         return False
     else:
         return True
+    
+@tool
+def sql_empty_db_response(string: str)  -> bool:
+    '''
+    Useful when you need to find the answer after query the database and it returned an empty or null response.
+    Input to this tool is an empty string and output is an answer to user question.
+    '''
+    return "Fix your query, maybe there are an Id that is wrong"
 
 # Antiguas tools
 def sql_translate(search_tables, db_schema, query_input) -> str:
